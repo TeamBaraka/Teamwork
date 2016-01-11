@@ -1,4 +1,4 @@
-package com.example.ric.mydiary;
+package com.example.ric.mydiary.Database;
 
 public enum Category {
     Car,
