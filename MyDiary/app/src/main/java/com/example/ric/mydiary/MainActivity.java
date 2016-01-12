@@ -22,11 +22,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        addEventButton = (FloatingActionButton) findViewById(R.id.add_event_button);
+        addEventButton = (FloatingActionButton) findViewById(R.id.btn_add_event);
         addEventButton.setOnClickListener(this);
-        addReminderButton = (FloatingActionButton) findViewById(R.id.add_reminder_button);
+        addReminderButton = (FloatingActionButton) findViewById(R.id.btn_add_reminder);
         addReminderButton.setOnClickListener(this);
-        exportButton = (FloatingActionButton) findViewById(R.id.export_button);
+        exportButton = (FloatingActionButton) findViewById(R.id.btn_export);
         exportButton.setOnClickListener(this);
     }
 
@@ -36,17 +36,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int viewId = v.getId();
 
         switch (viewId) {
-            case R.id.add_event_button: {
+            case R.id.btn_add_event: {
                 Intent intent = new Intent(MainActivity.this, CreateActivity.class);
                 startActivity(intent);
                 break;
             }
-            case R.id.add_reminder_button: {
+            case R.id.btn_add_reminder: {
                 Intent intent = new Intent(MainActivity.this, RemindActivity.class);
                 startActivity(intent);
                 break;
             }
-            case R.id.export_button: {
+            case R.id.btn_export: {
                 Intent intent = new Intent(MainActivity.this, ExportActivity.class);
                 startActivity(intent);
                 break;
