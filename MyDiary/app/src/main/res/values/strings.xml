@@ -7,6 +7,9 @@
     <string name="category">Category</string>
     <string name="description">Description</string>
     <string name="place">Place</string>
+    <string-array name="places">
+        <item>[Empty list]</item>
+    </string-array>
     <string name="image">Image</string>
     <string name="create_event">Create Event</string>
     <string name="date">Date</string>
