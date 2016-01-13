@@ -34,7 +34,7 @@ public class TimeSetter implements View.OnClickListener, TimePickerDialog.OnTime
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         //this.editText.setText( hourOfDay + ":" + minute);
         String myFormat = "HH:mm";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
 
         this.editText.setText(sdf.format(myCalendar.getTime()));
     }

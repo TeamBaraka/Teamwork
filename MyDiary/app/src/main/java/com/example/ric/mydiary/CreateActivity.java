@@ -73,20 +73,11 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (viewId) {
             case R.id.btn_save: {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-                Date date = new Date();
-
-                try {
-                    date = sdf.parse(inputDate.getText().toString() + " " + inputTime.getText().toString());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
                 mydb.createEvent(
                         inputTitle.getText().toString(),
                         inputDescription.getText().toString(),
                         inputCategory.getSelectedItem().toString(),
-                        date,
+                        getInputDate(),
                         inputPlace.getText().toString(),
                         inputPlace.getText().toString()
                 );
@@ -122,5 +113,26 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
             this.imageView.setImageBitmap(imageBitmap);
         }
+    }
+
+    private Date getInputDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+        String date = inputDate.getText().toString();
+        String time = inputTime.getText().toString();
+        if (time==""){
+            time = "00:00";
+        }
+
+        String datetime = date +" " + time;
+        Date dateForDb = new Date();
+
+        try {
+            dateForDb = sdf.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return dateForDb;
     }
 }

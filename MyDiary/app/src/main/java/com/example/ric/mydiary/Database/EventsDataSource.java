@@ -73,8 +73,9 @@ public class EventsDataSource {
         return id;
     }
 
-    public ArrayList<Event> getEventsByDate(Date dateTime) {
-        return getEvents(this.dbHelper.EVENTS_COLUMN_DATETIME + " = ?", new String[]{"date('now')"});
+    public ArrayList<Event> getEventsByDate() {
+        return getEvents(this.dbHelper.EVENTS_COLUMN_DATETIME + " >= date('now') and " +
+                this.dbHelper.EVENTS_COLUMN_DATETIME + " < ?", new String[]{"date('now', '+1 day')"});
     }
 
     public ArrayList<Event> getEventsByCategory(Category category) {

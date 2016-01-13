@@ -19,7 +19,4 @@
     <string name="cancel">Cancel</string>
     <string name="title_activity_maps">Map</string>
     <string name="todays_events">Today\'s events</string>
-    <string-array name="places">
-        <item>[Empty list]</item>
-    </string-array>
 </resources>

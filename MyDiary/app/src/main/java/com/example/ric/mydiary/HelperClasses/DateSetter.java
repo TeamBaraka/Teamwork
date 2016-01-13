@@ -40,7 +40,7 @@ public class DateSetter implements View.OnClickListener,DatePickerDialog.OnDateS
     private void updateDisplay() {
 
         String myFormat = "dd.MM.yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
 
         this.editText.setText(sdf.format(myCalendar.getTime()));
     }
