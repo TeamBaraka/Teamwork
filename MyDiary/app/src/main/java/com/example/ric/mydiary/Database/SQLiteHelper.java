@@ -24,14 +24,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
-                "create table" + EVENTS_TABLE_NAME + "(" +
-                        EVENTS_COLUMN_ID + "integer primary key autoincrement," +
-                        EVENTS_COLUMN_TITLE + "text," +
-                        EVENTS_COLUMN_DESCRIPTION + "text," +
-                        EVENTS_COLUMN_CATEGORY + "text not null," +
-                        EVENTS_COLUMN_DATETIME + "datetime," +
-                        EVENTS_COLUMN_PLACE + "text," +
-                        EVENTS_COLUMN_IMAGE + "text)"
+                "create table " + EVENTS_TABLE_NAME + "(" +
+                        EVENTS_COLUMN_ID + " integer primary key autoincrement," +
+                        EVENTS_COLUMN_TITLE + " text," +
+                        EVENTS_COLUMN_DESCRIPTION + " text," +
+                        EVENTS_COLUMN_CATEGORY + " text not null," +
+                        EVENTS_COLUMN_DATETIME + " datetime," +
+                        EVENTS_COLUMN_PLACE + " text," +
+                        EVENTS_COLUMN_IMAGE + " text)"
         );
     }
 

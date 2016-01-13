@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,7 +25,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements LocationListener,OnMapReadyCallback {
     GoogleMap mMap;
     LatLng myPosition;
-    private GoogleApiClient client;
+    private GoogleApiClient mClient;
+    private Uri mUrl;
+    private String mTitle;
+    private String mDescription;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +37,28 @@ public class MapsActivity extends FragmentActivity implements LocationListener,O
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        mUrl = Uri.parse("android-app://com.example.ric.mydiary/http/host/path");
+        //Uri.parse("http://host/path")
+        mTitle = "Map Page";
+        mDescription = "Something";
+
+        onStart();
+        onMapReady(mMap);
+    }
+
+    public Action getAction() {
+        Thing object = new Thing.Builder()
+                .setName(mTitle)
+                .setDescription(mDescription)
+                .setUrl(mUrl)
+                .build();
+
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
     }
 
     @Override
@@ -58,47 +84,21 @@ public class MapsActivity extends FragmentActivity implements LocationListener,O
             googleMap.addMarker(new MarkerOptions().position(myPosition).title("I'm here"));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
         }
-        //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        client.connect();
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Map Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app deep link URI is correct.
-//                Uri.parse("android-app://com.example.ric.mydiary/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.start(client, viewAction);
+        mClient.connect();
+        AppIndex.AppIndexApi.start(mClient, getAction());
     }
 
     @Override
     public void onStop() {
+        AppIndex.AppIndexApi.end(mClient, getAction());
+        mClient.disconnect();
         super.onStop();
-
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Map Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app deep link URI is correct.
-//                Uri.parse("android-app://com.example.ric.mydiary/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.end(client, viewAction);
-//        client.disconnect();
     }
 
     @Override

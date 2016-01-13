@@ -1,13 +1,14 @@
 package com.example.ric.mydiary.Database;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Event {
     private long id;
     private String title;
     private String description;
     private String category;
-    private Timestamp dateTime;
+    private Date dateTime;
     private String place;
     private String image;
 
@@ -43,11 +44,11 @@ public class Event {
         this.category = category;
     }
 
-    public Timestamp getDateTime() {
+    public Date getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Timestamp dateTime) {
+    public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -67,4 +68,7 @@ public class Event {
         this.image = image;
     }
 
+    public String toString() {
+        return title + " " + category + " " + dateTime;
+    }
 }

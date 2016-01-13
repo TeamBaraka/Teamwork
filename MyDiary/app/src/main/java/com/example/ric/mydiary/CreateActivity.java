@@ -14,30 +14,51 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.example.ric.mydiary.Database.Category;
+import com.example.ric.mydiary.Database.EventsDataSource;
 import com.example.ric.mydiary.HelperClasses.DateSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class CreateActivity extends AppCompatActivity implements View.OnClickListener {
+    private EditText inputTitle;
+    private EditText inputDescription;
+    private Spinner inputCategory;
     private EditText inputDate;
     private EditText inputTime;
-    private Spinner inputCategory;
     private ImageView imageView;
+    private EditText inputPlace;
     private Button cancelButton;
     private Button saveButton;
     private ImageButton placeButton;
     int myRequestCode = 1234;
+    Date date;
+    Date time;
+    EventsDataSource mydb;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
 
-        inputCategory=(Spinner)findViewById(R.id.edit_category);
+        mydb = new EventsDataSource(this);
+        //mydb.open();
+
+        inputTitle = (EditText) findViewById(R.id.edit_title);
+        inputDescription = (EditText) findViewById(R.id.edit_description);
+        inputCategory = (Spinner) findViewById(R.id.edit_category);
         inputCategory.setAdapter(new ArrayAdapter<Category>(this, android.R.layout.simple_spinner_dropdown_item, Category.values()));
         inputDate = (EditText) findViewById(R.id.edit_date);
-        DateSetter dateSetter = new DateSetter(this,inputDate);
+        DateSetter dateSetter = new DateSetter(this, inputDate);
+        date = dateSetter.getChosenDate();
         inputTime = (EditText) findViewById(R.id.edit_time);
-        TimeSetter timeSetter = new TimeSetter(this,inputTime);
+        TimeSetter timeSetter = new TimeSetter(this, inputTime);
+        time = timeSetter.getChosenTime();
         imageView = (ImageView) this.findViewById(R.id.photo_taken);
+        inputPlace = (EditText) findViewById(R.id.edit_place);
+
         saveButton = (Button) findViewById(R.id.btn_save);
         saveButton.setOnClickListener(this);
         cancelButton = (Button) findViewById(R.id.btn_cancel);
@@ -52,6 +73,23 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (viewId) {
             case R.id.btn_save: {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+                Date date = new Date();
+
+                try {
+                    date = sdf.parse(inputDate.getText().toString() + " " + inputTime.getText().toString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                mydb.createEvent(
+                        inputTitle.getText().toString(),
+                        inputDescription.getText().toString(),
+                        inputCategory.getSelectedItem().toString(),
+                        date,
+                        inputPlace.getText().toString(),
+                        inputPlace.getText().toString()
+                );
                 Intent intent = new Intent(CreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;
@@ -86,4 +124,3 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 }
-

@@ -8,6 +8,7 @@ import android.widget.TimePicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class TimeSetter implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
@@ -36,5 +37,9 @@ public class TimeSetter implements View.OnClickListener, TimePickerDialog.OnTime
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         this.editText.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    public Date getChosenTime() {
+        return myCalendar.getTime();
     }
 }

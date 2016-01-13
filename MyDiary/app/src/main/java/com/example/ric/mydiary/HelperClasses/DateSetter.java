@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class DateSetter implements View.OnClickListener,DatePickerDialog.OnDateSetListener {
@@ -42,5 +43,9 @@ public class DateSetter implements View.OnClickListener,DatePickerDialog.OnDateS
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         this.editText.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    public Date getChosenDate() {
+        return myCalendar.getTime();
     }
 }
