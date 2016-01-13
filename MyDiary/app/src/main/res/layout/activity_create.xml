@@ -29,6 +29,7 @@
             android:stretchColumns="1">
 
             <TableRow>
+
                 <TextView
                     android:id="@+id/label_title"
                     android:layout_width="wrap_content"
@@ -132,15 +133,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:focusable="false"
+                    android:focusable="true"
                     android:inputType="text" />
+            </TableRow>
+
+            <TableRow>
+
+                <Spinner
+                    android:id="@+id/spn_places"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/places" />
 
                 <ImageButton
                     android:id="@+id/btn_take_place"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_compass"
-                    android:onClick="takePhoto"/>
+                    android:onClick="takePlace"
+                    android:src="@android:drawable/ic_menu_compass" />
             </TableRow>
 
             <TableRow>
@@ -156,14 +167,14 @@
                 <ImageView
                     android:id="@+id/photo_taken"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
 
                 <ImageButton
                     android:id="@+id/btn_take_photo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_camera"
-                    android:onClick="takePhoto"/>
+                    android:onClick="takePhoto"
+                    android:src="@android:drawable/ic_menu_camera" />
             </TableRow>
 
         </TableLayout>
@@ -173,13 +184,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fab_margin"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
                 android:onClick="run"
-                android:text="@string/save"
-                android:layout_marginRight="20dp" />
+                android:text="@string/save" />
+
             <Button
                 android:id="@+id/btn_cancel"
                 android:layout_width="wrap_content"
