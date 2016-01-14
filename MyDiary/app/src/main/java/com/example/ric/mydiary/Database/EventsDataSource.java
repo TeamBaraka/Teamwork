@@ -76,6 +76,10 @@ public class EventsDataSource {
         return id;
     }
 
+    public Event getEventsById(long id) {
+        return getEvents(this.dbHelper.EVENTS_COLUMN_ID + " = ? ", new String[]{String.valueOf(id)}).get(0);
+    }
+
     public ArrayList<Event> getEventsByDate() {
         return getEvents(this.dbHelper.EVENTS_COLUMN_DATETIME + " >= date('now') and " +
                 this.dbHelper.EVENTS_COLUMN_DATETIME + " < date('now', '+1 day')", new String[]{""});
@@ -118,6 +122,4 @@ public class EventsDataSource {
         event.setImage(cursor.getString(6));
         return event;
     }
-
-
 }

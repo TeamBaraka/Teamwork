@@ -3,7 +3,9 @@ package com.example.ric.mydiary;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.example.ric.mydiary.HelperClasses.DateSetter;
 import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +37,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private EditText inputTime;
     private ImageView imageView;
     private EditText inputPlace;
+    private String inputImage;
     private Button cancelButton;
     private Button saveButton;
     private ImageButton placeButton;
@@ -76,12 +80,13 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                         inputTitle.getText().toString(),
                         inputDescription.getText().toString(),
                         inputCategory.getSelectedItem().toString(),
-                        DateTimeSetter.getDateFromDisplayString(inputDate.getText().toString(),inputTime.getText().toString()),
+                        DateTimeSetter.getDateFromDisplayString(inputDate.getText().toString(), inputTime.getText().toString()),
                         inputPlace.getText().toString(),
-                        inputPlace.getText().toString()
+                        inputImage
                 );
 
                 Toast.makeText(getApplicationContext(), "Event saved!", Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(CreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;
@@ -100,9 +105,15 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void takePhoto(View view) {
+        Uri imageUri;
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePhotoIntent, myRequestCode);
+            File photo = new File(Environment.getExternalStorageDirectory(), "Pic_"+DateTimeSetter.setDateToSqlite(new Date())+".jpg");
+            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+            imageUri = Uri.fromFile(photo);
+            this.inputImage = imageUri.getPath();
+
         }
     }
 

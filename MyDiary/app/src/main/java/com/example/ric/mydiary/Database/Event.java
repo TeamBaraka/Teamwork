@@ -73,6 +73,6 @@ public class Event {
     }
 
     public String toString() {
-        return id + " "+title + " " + category + " " + DateTimeSetter.setDateToDisplayString(dateTime);
+        return id + " "+title + " " + category + " " + DateTimeSetter.setDateToDisplayString(dateTime)+ " " +image;
     }
 }

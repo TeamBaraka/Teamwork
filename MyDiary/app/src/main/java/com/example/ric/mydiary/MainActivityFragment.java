@@ -5,21 +5,19 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.ric.mydiary.Database.Event;
 import com.example.ric.mydiary.Database.EventsDataSource;
-import com.example.ric.mydiary.HelperClasses.PagerAdapter;
 
 import java.util.ArrayList;
 
-public class MainActivityFragment extends Fragment implements View.OnClickListener {
+public class MainActivityFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
     private FloatingActionButton addEventButton;
     private FloatingActionButton addReminderButton;
     private FloatingActionButton exportButton;
@@ -27,34 +25,22 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     EventsDataSource mydb;
     private View rootView;
     private Context context;
+    ArrayAdapter<Event> arrayAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        this.context= getActivity();
+        this.context = getActivity();
         mydb = new EventsDataSource(context);
-        //ArrayList<Event> list = mydb.getEventsByCategory(Category.Birthday);
+
         ArrayList<Event> list = mydb.getEventsByDate();
-        ArrayAdapter<Event> arrayAdapter = new ArrayAdapter<Event>(context, android.R.layout.simple_list_item_1, list);
+        arrayAdapter = new ArrayAdapter<Event>(context, android.R.layout.simple_list_item_1, list);
 
         listView = (ListView) rootView.findViewById(R.id.list_of_todays_events);
         listView.setAdapter(arrayAdapter);
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-//            @Override
-//            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-//                int id_To_Search = arg2 + 1;
-//
-//                Bundle dataBundle = new Bundle();
-//                dataBundle.putInt("id", id_To_Search);
-//
-//                Intent intent = new Intent(MainActivity.this, CreateActivity.class);
-//
-//                intent.putExtras(dataBundle);
-//                startActivity(intent);
-//            }
-//        });
 
+        listView.setOnItemClickListener(this);
 
         addEventButton = (FloatingActionButton) rootView.findViewById(R.id.btn_add_event);
         addEventButton.setOnClickListener(this);
@@ -64,6 +50,16 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         exportButton.setOnClickListener(this);
 
         return rootView;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Event event = arrayAdapter.getItem(position);
+
+        Intent intent = new Intent(context, EventDetailsActivity.class);
+        intent.putExtra("id", event.getId());
+
+        startActivity(intent);
     }
 
     @Override
@@ -89,17 +85,20 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
             }
         }
     }
-//    @Override
-//    protected void onResume() {
-//        mydb.open();
-//        super.onResume();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        mydb.close();
-//        super.onPause();
-//    }
+
+    @Override
+    public void onResume() {
+        mydb.open();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        mydb.close();
+        super.onPause();
+    }
+
+
 }
 
 

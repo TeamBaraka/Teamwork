@@ -36,6 +36,7 @@
         </activity>
         <activity android:name=".CreateActivity" />
         <activity android:name=".RemindActivity" />
+        <activity android:name=".EventDetailsActivity" />
         <activity
             android:name=".ExportActivity"
             android:theme="@style/AppTheme.NoActionBar" />
