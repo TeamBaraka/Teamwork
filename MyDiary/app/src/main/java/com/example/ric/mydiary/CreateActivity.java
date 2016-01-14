@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import com.example.ric.mydiary.Database.Category;
 import com.example.ric.mydiary.Database.EventsDataSource;
 import com.example.ric.mydiary.HelperClasses.DateSetter;
+import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
 
 import java.sql.Timestamp;
@@ -35,8 +36,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private Button saveButton;
     private ImageButton placeButton;
     int myRequestCode = 1234;
-    Date date;
-    Date time;
     EventsDataSource mydb;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +51,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         inputCategory.setAdapter(new ArrayAdapter<Category>(this, android.R.layout.simple_spinner_dropdown_item, Category.values()));
         inputDate = (EditText) findViewById(R.id.edit_date);
         DateSetter dateSetter = new DateSetter(this, inputDate);
-        date = dateSetter.getChosenDate();
         inputTime = (EditText) findViewById(R.id.edit_time);
         TimeSetter timeSetter = new TimeSetter(this, inputTime);
-        time = timeSetter.getChosenTime();
         imageView = (ImageView) this.findViewById(R.id.photo_taken);
         inputPlace = (EditText) findViewById(R.id.edit_place);
 
@@ -77,7 +74,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                         inputTitle.getText().toString(),
                         inputDescription.getText().toString(),
                         inputCategory.getSelectedItem().toString(),
-                        getInputDate(),
+                        DateTimeSetter.getDateFromDisplayString(inputDate.getText().toString(),inputTime.getText().toString()),
                         inputPlace.getText().toString(),
                         inputPlace.getText().toString()
                 );
@@ -113,26 +110,5 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
             this.imageView.setImageBitmap(imageBitmap);
         }
-    }
-
-    private Date getInputDate(){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-        String date = inputDate.getText().toString();
-        String time = inputTime.getText().toString();
-        if (time==""){
-            time = "00:00";
-        }
-
-        String datetime = date +" " + time;
-        Date dateForDb = new Date();
-
-        try {
-            dateForDb = sdf.parse(datetime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return dateForDb;
     }
 }

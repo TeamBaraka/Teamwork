@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         mydb = new EventsDataSource(this);
-        //ArrayList<Event> list = mydb.getEventsByCategory(Category.Car);
+        //ArrayList<Event> list = mydb.getEventsByCategory(Category.Birthday);
         ArrayList<Event> list = mydb.getEventsByDate();
         ArrayAdapter<Event> arrayAdapter = new ArrayAdapter<Event>(this, android.R.layout.simple_list_item_1, list);
 

@@ -1,7 +1,11 @@
 package com.example.ric.mydiary.Database;
 
+import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
+
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Event {
     private long id;
@@ -69,6 +73,6 @@ public class Event {
     }
 
     public String toString() {
-        return title + " " + category + " " + dateTime;
+        return id + " "+title + " " + category + " " + DateTimeSetter.setDateToDisplayString(dateTime);
     }
 }

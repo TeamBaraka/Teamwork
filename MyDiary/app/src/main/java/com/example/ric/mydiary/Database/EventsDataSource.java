@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.SQLException;
 
+import com.example.ric.mydiary.HelperClasses.DateSetter;
+import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,7 +39,7 @@ public class EventsDataSource {
         values.put(this.dbHelper.EVENTS_COLUMN_TITLE, title);
         values.put(this.dbHelper.EVENTS_COLUMN_DESCRIPTION, description);
         values.put(this.dbHelper.EVENTS_COLUMN_CATEGORY, category);
-        values.put(this.dbHelper.EVENTS_COLUMN_DATETIME, getDateTime(dateTime));
+        values.put(this.dbHelper.EVENTS_COLUMN_DATETIME, DateTimeSetter.setDateToSqlite(dateTime));
         values.put(this.dbHelper.EVENTS_COLUMN_PLACE, place);
         values.put(this.dbHelper.EVENTS_COLUMN_IMAGE, image);
 
@@ -52,7 +55,7 @@ public class EventsDataSource {
         values.put(this.dbHelper.EVENTS_COLUMN_TITLE, title);
         values.put(this.dbHelper.EVENTS_COLUMN_DESCRIPTION, description);
         values.put(this.dbHelper.EVENTS_COLUMN_CATEGORY, category);
-        values.put(this.dbHelper.EVENTS_COLUMN_DATETIME, getDateTime(dateTime));
+        values.put(this.dbHelper.EVENTS_COLUMN_DATETIME, DateTimeSetter.setDateToSqlite(dateTime));
         values.put(this.dbHelper.EVENTS_COLUMN_PLACE, place);
         values.put(this.dbHelper.EVENTS_COLUMN_IMAGE, image);
 
@@ -75,7 +78,7 @@ public class EventsDataSource {
 
     public ArrayList<Event> getEventsByDate() {
         return getEvents(this.dbHelper.EVENTS_COLUMN_DATETIME + " >= date('now') and " +
-                this.dbHelper.EVENTS_COLUMN_DATETIME + " < ?", new String[]{"date('now', '+1 day')"});
+                this.dbHelper.EVENTS_COLUMN_DATETIME + " < date('now', '+1 day')", new String[]{""});
     }
 
     public ArrayList<Event> getEventsByCategory(Category category) {
@@ -83,6 +86,10 @@ public class EventsDataSource {
     }
 
     public ArrayList<Event> getEvents(String selection, String[] selectionArgs) {
+        if (selectionArgs[0].isEmpty()) {
+            selectionArgs = null;
+        }
+
         ArrayList<Event> events = new ArrayList<Event>();
 
         this.db = this.dbHelper.getReadableDatabase();
@@ -106,28 +113,11 @@ public class EventsDataSource {
         event.setTitle(cursor.getString(1));
         event.setDescription(cursor.getString(2));
         event.setCategory(cursor.getString(3));
-        //TODO dont know if this works
-        event.setDateTime(getDate(cursor.getString(4)));
+        event.setDateTime(DateTimeSetter.getDateFromSqlite(cursor.getString(4)));
         event.setPlace(cursor.getString(5));
         event.setImage(cursor.getString(6));
         return event;
     }
 
-    private String getDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        return sdf.format(date);
-    }
 
-    private Date getDate(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date returnDate = new Date();
-        try {
-            returnDate = sdf.parse(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return returnDate;
-    }
 }

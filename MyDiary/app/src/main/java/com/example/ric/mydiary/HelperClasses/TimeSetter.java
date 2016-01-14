@@ -24,19 +24,14 @@ public class TimeSetter implements View.OnClickListener, TimePickerDialog.OnTime
 
     @Override
     public void onClick(View v) {
-            int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
-            int minute = myCalendar.get(Calendar.MINUTE);
-            new TimePickerDialog(context, this, hour, minute, true).show();
-
+        int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = myCalendar.get(Calendar.MINUTE);
+        new TimePickerDialog(context, this, hour, minute, true).show();
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        //this.editText.setText( hourOfDay + ":" + minute);
-        String myFormat = "HH:mm";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
-
-        this.editText.setText(sdf.format(myCalendar.getTime()));
+        this.editText.setText(hourOfDay + ":" + minute);
     }
 
     public Date getChosenTime() {
