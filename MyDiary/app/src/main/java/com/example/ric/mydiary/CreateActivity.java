@@ -1,5 +1,6 @@
 package com.example.ric.mydiary;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.ric.mydiary.Database.Category;
 import com.example.ric.mydiary.Database.EventsDataSource;
@@ -78,6 +80,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                         inputPlace.getText().toString(),
                         inputPlace.getText().toString()
                 );
+
+                Toast.makeText(getApplicationContext(), "Event saved!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(CreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;

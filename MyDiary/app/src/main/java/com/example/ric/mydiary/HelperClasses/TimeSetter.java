@@ -10,11 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class TimeSetter implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
     private EditText editText;
     private Context context;
-    Calendar myCalendar = Calendar.getInstance();
+    Calendar myCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+2:00"));
 
     public TimeSetter(Context context, EditText editText) {
         this.editText = editText;
