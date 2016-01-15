@@ -1,8 +1,13 @@
 package com.example.ric.mydiary;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -18,6 +23,11 @@ import com.example.ric.mydiary.Database.EventsDataSource;
 import com.example.ric.mydiary.HelperClasses.DateSetter;
 import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 
 public class EventDetailsActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView title;
@@ -36,7 +46,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-        closeButton = (ImageButton)findViewById(R.id.btn_close_details);
+        closeButton = (ImageButton) findViewById(R.id.btn_close_details);
         closeButton.setOnClickListener(this);
 
         mydb = new EventsDataSource(this);
@@ -52,15 +62,14 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         date = (TextView) findViewById(R.id.tv_date);
         time = (TextView) findViewById(R.id.tv_time);
         place = (TextView) findViewById(R.id.tv_place);
-        imageView = (ImageView) this.findViewById(R.id.photo_taken);
+        imageView = (ImageView) this.findViewById(R.id.iv_image);
 
         title.setText(currentEvent.getTitle());
         description.setText(currentEvent.getDescription());
         category.setText(currentEvent.getCategory());
         date.setText(DateTimeSetter.setDateToDisplayString(currentEvent.getDateTime()));
         place.setText(currentEvent.getPlace());
-        //imageView.setImageBitmap();
-
+        new DownloadImageTask(imageView).execute(currentEvent.getImage());
     }
 
     @Override
@@ -76,6 +85,33 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                 startActivity(intent);
                 break;
             }
+        }
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap image = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                image = BitmapFactory.decodeStream(in);
+
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+
+            return image;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 }

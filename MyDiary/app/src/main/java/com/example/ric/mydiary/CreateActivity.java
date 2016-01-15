@@ -1,13 +1,21 @@
 package com.example.ric.mydiary;
 
-import android.app.Fragment;
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,10 +32,10 @@ import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
 
 import java.io.File;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class CreateActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText inputTitle;
@@ -42,6 +50,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private Button saveButton;
     private ImageButton placeButton;
     int myRequestCode = 1234;
+    private LocationManager locationManager;
+    private android.location.LocationListener locationListener;
+
     EventsDataSource mydb;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +60,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_create);
 
         mydb = new EventsDataSource(this);
-        //mydb.open();
 
         inputTitle = (EditText) findViewById(R.id.edit_title);
         inputDescription = (EditText) findViewById(R.id.edit_description);
@@ -97,8 +107,27 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             }
             case R.id.btn_take_place: {
-                Intent intent = new Intent(CreateActivity.this, MapsActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(CreateActivity.this, MapsActivity.class);
+//                startActivity(intent);
+
+                locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+                locationListener = new LocationListener();
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+//            this.requestPermissions(new String[]{
+//                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+//                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
+//                    1);
+                }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+
+                locationManager.removeUpdates(locationListener);
                 break;
             }
         }
@@ -109,7 +138,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePhotoIntent, myRequestCode);
-            File photo = new File(Environment.getExternalStorageDirectory(), "Pic_"+DateTimeSetter.setDateToSqlite(new Date())+".jpg");
+            File photo = new File(getCacheDir().getPath(), "Pic_" + DateTimeSetter.setDateToSqlite(new Date()) + ".jpg");
             takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
             imageUri = Uri.fromFile(photo);
             this.inputImage = imageUri.getPath();
@@ -126,4 +155,29 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             this.imageView.setImageBitmap(imageBitmap);
         }
     }
+
+    private class LocationListener implements android.location.LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            inputPlace.setText("Lat: " + String.valueOf(location.getLatitude())+
+                                " Long: " + String.valueOf(location.getLongitude()));
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    }
+
 }
