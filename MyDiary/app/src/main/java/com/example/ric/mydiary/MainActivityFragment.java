@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.example.ric.mydiary.Database.Event;
 import com.example.ric.mydiary.Database.EventsDataSource;
+import com.example.ric.mydiary.HelperClasses.EventAdapter;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,8 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     EventsDataSource mydb;
     private View rootView;
     private Context context;
-    ArrayAdapter<Event> arrayAdapter;
+    //ArrayAdapter<Event> arrayAdapter;
+    private EventAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,10 +37,10 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         mydb = new EventsDataSource(context);
 
         ArrayList<Event> list = mydb.getEventsByDate();
-        arrayAdapter = new ArrayAdapter<Event>(context, android.R.layout.simple_list_item_1, list);
+        adapter = new EventAdapter(context, list);
 
         listView = (ListView) rootView.findViewById(R.id.list_of_todays_events);
-        listView.setAdapter(arrayAdapter);
+        listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
 
@@ -54,7 +56,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Event event = arrayAdapter.getItem(position);
+        Event event = adapter.getItem(position);
 
         Intent intent = new Intent(context, EventDetailsActivity.class);
         intent.putExtra("id", event.getId());

@@ -69,7 +69,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         category.setText(currentEvent.getCategory());
         date.setText(DateTimeSetter.setDateToDisplayString(currentEvent.getDateTime()));
         place.setText(currentEvent.getPlace());
-        new DownloadImageTask(imageView).execute(currentEvent.getImage());
+        //new DownloadImageTask(imageView).execute(currentEvent.getImage());
     }
 
     @Override

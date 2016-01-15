@@ -42,6 +42,7 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
         loader = (ProgressBar) rootView.findViewById(R.id.pb_loader);
 
         listView.setVisibility(View.GONE);
+        loader.setVisibility(View.GONE);
 
         return rootView;
     }
@@ -64,6 +65,7 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
     }
 
     private void loaderAnimation() {
+        loader.setVisibility(View.VISIBLE);
         loader.animate()
                 .alpha(1f)
                 .setDuration(3000)
@@ -76,9 +78,12 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         loader.setVisibility(View.GONE);
+
                         listView.animate()
-                                .alpha(1f)
-                                .setDuration(300);
+                                .translationY(0)
+                                .alpha(1)
+                                .setDuration(500);
+                        listView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
