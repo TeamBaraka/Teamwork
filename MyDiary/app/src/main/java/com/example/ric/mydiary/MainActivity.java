@@ -56,4 +56,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void setCurrentItem (int item, boolean smoothScroll) {
+
+        viewPager.setCurrentItem(item, smoothScroll);
+    }
 }

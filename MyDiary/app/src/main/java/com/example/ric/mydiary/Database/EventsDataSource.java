@@ -80,14 +80,11 @@ public class EventsDataSource {
         return getEvents(this.dbHelper.EVENTS_COLUMN_ID + " = ? ", new String[]{String.valueOf(id)}).get(0);
     }
 
-    public ArrayList<Event> getEventsByDate(String searchDate) {
-//        //Date stringDate = DateTimeSetter.sdfSqlite.parse(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-//                            .format(date));
-        String query =this.dbHelper.EVENTS_COLUMN_DATETIME + " >= datetime(searchDate) and " +
-                this.dbHelper.EVENTS_COLUMN_DATETIME + " < date(searchDate, '+1 day')";
-        return getEvents(this.dbHelper.EVENTS_COLUMN_DATETIME + " >= datetime(searchDate) and " +
-                this.dbHelper.EVENTS_COLUMN_DATETIME + " < datetime(searchDate)", new String[]{""});
-        //return getEvents(this.dbHelper.EVENTS_COLUMN_DATETIME + " like " + stringDate + "%", new String[]{""});
+    public ArrayList<Event> getEventsByDate(Date searchDate) {
+        String stringDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(searchDate);
+        String query =this.dbHelper.EVENTS_COLUMN_DATETIME + " >= datetime('"+stringDate+"') and " +
+                this.dbHelper.EVENTS_COLUMN_DATETIME + " < date('"+stringDate+"', '+1 day')";
+        return getEvents(query, new String[]{""});
     }
 
     public ArrayList<Event> getEventsForToday() {
@@ -95,12 +92,12 @@ public class EventsDataSource {
                 this.dbHelper.EVENTS_COLUMN_DATETIME + " < date('now', '+1 day')", new String[]{""});
     }
 
-    public ArrayList<Event> getEventsByCategory(Category category) {
-        return getEvents(this.dbHelper.EVENTS_COLUMN_CATEGORY + " = ?", new String[]{category.toString()});
+    public ArrayList<Event> getEventsByCategory(String category) {
+        return getEvents(this.dbHelper.EVENTS_COLUMN_CATEGORY + " = ?", new String[]{category});
     }
 
     public ArrayList<Event> getEventsByTitle(String title) {
-        return getEvents(this.dbHelper.EVENTS_COLUMN_CATEGORY + " like \""+title+"%\"", new String[]{""});
+        return getEvents(this.dbHelper.EVENTS_COLUMN_TITLE + " like '%"+title+"%'", new String[]{""});
     }
 
     public ArrayList<Event> getEvents(String selection, String[] selectionArgs) {

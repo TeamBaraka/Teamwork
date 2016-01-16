@@ -27,4 +27,5 @@
     <string name="todays_events">Today\'s Events</string>
     <string name="search_events">Search Events</string>
     <string name="event_details">Event Details</string>
+    <string name="get_all">Get all</string>
 </resources>

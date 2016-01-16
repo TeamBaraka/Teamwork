@@ -11,7 +11,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/btn_container"
         android:layout_alignParentTop="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin">
 
         <TextView
             android:layout_width="match_parent"
@@ -20,12 +21,41 @@
             android:text="@string/search_events"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <Spinner
-            android:id="@+id/sp_choose_search"
+        <RadioGroup
+            android:id="@+id/radioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:entries="@array/search_categories"
-            android:paddingLeft="@dimen/activity_horizontal_margin"/>
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_horizontal_margin">
+
+            <RadioButton
+                android:id="@+id/radio_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title"
+                android:checked="false"/>
+
+            <RadioButton
+                android:id="@+id/radio_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/category"
+                android:checked="false"/>
+
+            <RadioButton
+                android:id="@+id/radio_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date"
+                android:checked="false"/>
+
+            <RadioButton
+                android:id="@+id/radio_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/get_all"
+                android:checked="false"/>
+        </RadioGroup>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -35,11 +65,12 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/btn_search" />
+                android:layout_toLeftOf="@+id/btn_search"
+                android:id="@+id/editText" />
 
             <Spinner
                 android:id="@+id/sp_categories_to_search"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/btn_search"
                 android:visibility="gone" />
@@ -52,6 +83,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/fab_margin"
                 android:src="@android:drawable/ic_menu_search" />
+
         </RelativeLayout>
 
         <ProgressBar
@@ -64,7 +96,9 @@
         <ListView
             android:id="@+id/list_of_found_events"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"/>
 
     </LinearLayout>
 
