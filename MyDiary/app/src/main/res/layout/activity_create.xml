@@ -61,7 +61,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:inputType="text" />
+                    android:singleLine="false"
+                    android:inputType="text|textMultiLine" />
             </TableRow>
 
             <TableRow>
@@ -184,20 +185,23 @@
             android:layout_marginTop="@dimen/fab_margin"
             android:orientation="horizontal">
 
-            <Button
+
+            <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:onClick="run"
-                android:text="@string/save" />
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@android:drawable/ic_menu_save" />
 
-            <Button
+            <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="run"
-                android:text="@string/cancel" />
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
         </LinearLayout>
 
     </LinearLayout>

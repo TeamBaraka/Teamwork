@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,9 @@ import com.example.ric.mydiary.Database.EventsDataSource;
 import com.example.ric.mydiary.HelperClasses.DateSetter;
 import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -38,22 +42,24 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     private TextView time;
     private ImageView imageView;
     private TextView place;
-    private ImageButton closeButton;
+    private FloatingActionButton closeButton;
     EventsDataSource mydb;
     Event currentEvent;
+    String sender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-        closeButton = (ImageButton) findViewById(R.id.btn_close_details);
+        closeButton = (FloatingActionButton) findViewById(R.id.btn_close_details);
         closeButton.setOnClickListener(this);
 
         mydb = new EventsDataSource(this);
 
         Bundle bundle = getIntent().getExtras();
         Long id = bundle.getLong("id");
+        sender = bundle.get("SENDER_CLASS_NAME").toString();
 
         currentEvent = mydb.getEventsById(id);
 
@@ -61,7 +67,6 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         description = (TextView) findViewById(R.id.tv_description);
         category = (TextView) findViewById(R.id.tv_category);
         date = (TextView) findViewById(R.id.tv_date);
-        time = (TextView) findViewById(R.id.tv_time);
         place = (TextView) findViewById(R.id.tv_place);
         imageView = (ImageView) this.findViewById(R.id.iv_image);
 
@@ -73,6 +78,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         //new DownloadImageTask(imageView).execute(currentEvent.getImage());
         Bitmap bitmap = BitmapFactory.decodeFile(currentEvent.getImage());
         imageView.setImageBitmap(bitmap);
+
     }
 
     @Override
@@ -82,11 +88,17 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         switch (viewId) {
             case R.id.btn_close_details: {
                 Toast.makeText(getApplicationContext(), "Event details closed!", Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(EventDetailsActivity.this, MainActivity.class);
-
-                startActivity(intent);
-                break;
+                Intent intent;
+                switch (sender) {
+                    case "class com.example.ric.mydiary.MainActivityFragment":
+                        intent = new Intent(EventDetailsActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        break;
+                    case "class com.example.ric.mydiary.MainSearchFragment":
+                        intent = new Intent(EventDetailsActivity.this, MainSearchFragment.class);
+                        startActivity(intent);
+                        break;
+                }
             }
         }
     }
@@ -102,7 +114,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
             String urldisplay = urls[0];
             Bitmap image = null;
             try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
+                InputStream in = new URL(urldisplay).openStream();
                 image = BitmapFactory.decodeStream(in);
 
             } catch (Exception e) {

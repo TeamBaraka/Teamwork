@@ -10,6 +10,12 @@
     <string-array name="places">
         <item>[Empty list]</item>
     </string-array>
+    <string-array name="search_categories">
+        <item>Title</item>
+        <item>Category</item>
+        <item>Date</item>
+        <item>List all</item>
+    </string-array>
     <string name="image">Image</string>
     <string name="create_event">Create Event</string>
     <string name="date">Date</string>
@@ -18,7 +24,7 @@
     <string name="set_date">Set date</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_maps">Map</string>
-    <string name="todays_events">Today\'s events</string>
+    <string name="todays_events">Today\'s Events</string>
     <string name="search_events">Search Events</string>
-    <string name="event_details">Event details</string>
+    <string name="event_details">Event Details</string>
 </resources>

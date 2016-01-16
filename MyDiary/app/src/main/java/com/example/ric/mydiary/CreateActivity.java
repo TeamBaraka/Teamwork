@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -48,8 +49,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView imageView;
     private EditText inputPlace;
     private String inputImage;
-    private Button cancelButton;
-    private Button saveButton;
+    private FloatingActionButton cancelButton;
+    private FloatingActionButton saveButton;
     private ImageButton placeButton;
     int myRequestCode = 1234;
     private LocationManager locationManager;
@@ -74,9 +75,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         imageView = (ImageView) this.findViewById(R.id.photo_taken);
         inputPlace = (EditText) findViewById(R.id.edit_place);
 
-        saveButton = (Button) findViewById(R.id.btn_save);
+        saveButton = (FloatingActionButton) findViewById(R.id.btn_save);
         saveButton.setOnClickListener(this);
-        cancelButton = (Button) findViewById(R.id.btn_cancel);
+        cancelButton = (FloatingActionButton) findViewById(R.id.btn_cancel);
         cancelButton.setOnClickListener(this);
         placeButton = (ImageButton) findViewById(R.id.btn_take_place);
         placeButton.setOnClickListener(this);
@@ -144,9 +145,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             startActivityForResult(takePhotoIntent, myRequestCode);
             File photo = new File(getCacheDir().getPath(), "Pic_" + DateTimeSetter.setDateToSqlite(new Date()) + ".jpg");
             takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+
             imageUri = Uri.fromFile(photo);
             this.inputImage = imageUri.getPath();
-
         }
     }
 

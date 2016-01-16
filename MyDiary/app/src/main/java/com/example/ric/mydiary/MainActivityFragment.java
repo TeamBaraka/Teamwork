@@ -17,6 +17,7 @@ import com.example.ric.mydiary.Database.EventsDataSource;
 import com.example.ric.mydiary.HelperClasses.EventAdapter;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivityFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
     private FloatingActionButton addEventButton;
@@ -36,7 +37,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         this.context = getActivity();
         mydb = new EventsDataSource(context);
 
-        ArrayList<Event> list = mydb.getEventsByDate();
+        ArrayList<Event> list = mydb.getEventsForToday();
         adapter = new EventAdapter(context, list);
 
         listView = (ListView) rootView.findViewById(R.id.list_of_todays_events);
@@ -60,6 +61,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
         Intent intent = new Intent(context, EventDetailsActivity.class);
         intent.putExtra("id", event.getId());
+        intent.putExtra("SENDER_CLASS_NAME", this.getClass());
 
         startActivity(intent);
     }

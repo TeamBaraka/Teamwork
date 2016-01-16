@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -18,16 +19,18 @@ import android.widget.ProgressBar;
 import com.example.ric.mydiary.Database.Category;
 import com.example.ric.mydiary.Database.Event;
 import com.example.ric.mydiary.Database.EventsDataSource;
+import com.example.ric.mydiary.HelperClasses.EventAdapter;
 
 import java.util.ArrayList;
 
-public class MainSearchFragment extends Fragment implements View.OnClickListener {
+public class MainSearchFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
     private ListView listView;
     private ProgressBar loader;
     EventsDataSource mydb;
     private View rootView;
     private Context context;
-    Button searchByCategoryButton;
+    FloatingActionButton searchByCategoryButton;
+    private EventAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +39,7 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
         this.context = getActivity();
         mydb = new EventsDataSource(context);
 
-        searchByCategoryButton = (Button) rootView.findViewById(R.id.btn_search);
+        searchByCategoryButton = (FloatingActionButton) rootView.findViewById(R.id.btn_search);
         searchByCategoryButton.setOnClickListener(this);
         listView = (ListView) rootView.findViewById(R.id.list_of_found_events);
         loader = (ProgressBar) rootView.findViewById(R.id.pb_loader);
@@ -57,14 +60,26 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
                 loaderAnimation();
 
                 ArrayList<Event> list = mydb.getEventsByCategory(Category.Birthday);
-                ArrayAdapter<Event> arrayAdapter = new ArrayAdapter<Event>(context, android.R.layout.simple_list_item_1, list);
-                listView.setAdapter(arrayAdapter);
+                adapter = new EventAdapter(context, list);
+                listView.setAdapter(adapter);
+                listView.setOnItemClickListener(this);
                 break;
             }
         }
     }
 
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Event event = adapter.getItem(position);
+
+        Intent intent = new Intent(context, EventDetailsActivity.class);
+        intent.putExtra("id", event.getId());
+        intent.putExtra("SENDER_CLASS_NAME", this.getClass());
+
+        startActivity(intent);
+    }
+
     private void loaderAnimation() {
+        listView.setVisibility(View.GONE);
         loader.setVisibility(View.VISIBLE);
         loader.animate()
                 .alpha(1f)

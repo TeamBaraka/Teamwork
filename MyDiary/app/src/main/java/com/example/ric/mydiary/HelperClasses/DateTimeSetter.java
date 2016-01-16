@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DateTimeSetter {
-    static SimpleDateFormat sdfSqlite = new SimpleDateFormat(
+    public static SimpleDateFormat sdfSqlite = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     static SimpleDateFormat sdfDisplayDatetime = new SimpleDateFormat(
             "dd.MM.yyyy HH:mm", Locale.getDefault());
