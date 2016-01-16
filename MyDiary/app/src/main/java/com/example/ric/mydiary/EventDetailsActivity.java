@@ -28,6 +28,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 
 public class EventDetailsActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView title;
@@ -70,6 +71,8 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         date.setText(DateTimeSetter.setDateToDisplayString(currentEvent.getDateTime()));
         place.setText(currentEvent.getPlace());
         //new DownloadImageTask(imageView).execute(currentEvent.getImage());
+        Bitmap bitmap = BitmapFactory.decodeFile(currentEvent.getImage());
+        imageView.setImageBitmap(bitmap);
     }
 
     @Override

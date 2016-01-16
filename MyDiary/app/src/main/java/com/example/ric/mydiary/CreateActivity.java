@@ -32,6 +32,7 @@ import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -151,10 +152,32 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == myRequestCode && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
+            SaveImage(imageBitmap, this.inputImage);
             this.imageView.setImageBitmap(imageBitmap);
         }
     }
+
+    //todo: Review this!
+    private void SaveImage(Bitmap bitmapData,String fullPath){
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(fullPath);
+            bitmapData.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            // (100) is the compression factor;
+            // (100) - no compression, (0) - full compression, good value is around 80 - on lower value the picture get messy
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private class LocationListener implements android.location.LocationListener {
 
