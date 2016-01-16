@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -113,20 +114,22 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
                 locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
                 locationListener = new LocationListener();
-                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                if (this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                         ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-//            this.requestPermissions(new String[]{
-//                            android.Manifest.permission.ACCESS_FINE_LOCATION,
-//                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
-//                    1);
+                    this.requestPermissions(new String[]{
+                                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                    android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                            myRequestCode);
                 }
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
                     return;
                 }
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
                 locationManager.removeUpdates(locationListener);
                 break;
@@ -158,7 +161,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     //todo: Review this!
-    private void SaveImage(Bitmap bitmapData,String fullPath){
+    private void SaveImage(Bitmap bitmapData, String fullPath) {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(fullPath);
@@ -183,18 +186,17 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onLocationChanged(Location location) {
-            inputPlace.setText("Lat: " + String.valueOf(location.getLatitude())+
-                                " Long: " + String.valueOf(location.getLongitude()));
+            //todo: here goes google maps api thing
+            inputPlace.setText("Lat: " + String.valueOf(location.getLatitude()) +
+                    " Long: " + String.valueOf(location.getLongitude()));
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-
         }
 
         @Override
