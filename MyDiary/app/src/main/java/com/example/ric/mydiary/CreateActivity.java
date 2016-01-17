@@ -21,6 +21,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -69,7 +70,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     private LocationManager locationManager;
     private android.location.LocationListener locationListener;
     final private String DefaultRadiusInMeters = "50";
-    final private String ApiKey = "AIzaSyB0X8RR2WOkk7NbNZEisvj2C7o3TAEcraI";
+    final private String ApiKey = "AIzaSyD0P_UWoN2NkmoGf4_-tHFqdPtds1iEVuk";
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
     BroadcastReceiver mReceiver;
@@ -98,7 +99,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         ArrayAdapter placesSpinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.empty_places, android.R.layout.simple_spinner_item);
         placesSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         placesSpinner.setAdapter(placesSpinnerAdapter);
-
+//(FloatingActionButton)
         saveButton = (FloatingActionButton) findViewById(R.id.btn_save);
         saveButton.setOnClickListener(this);
         cancelButton = (FloatingActionButton) findViewById(R.id.btn_cancel);
@@ -139,24 +140,24 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
                 locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
                 locationListener = new LocationListener();
-                if (ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                    ActivityCompat.requestPermissions(this,new String[]{
+                    ActivityCompat.requestPermissions(this, new String[]{
                                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                                     android.Manifest.permission.ACCESS_COARSE_LOCATION},
                             myRequestCode);
                 }
 
-                if (ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                     return;
                 }
 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-
+                locationManager.removeUpdates(locationListener);
                 break;
             }
         }
@@ -211,13 +212,36 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onLocationChanged(Location location) {
-            //todo: here goes google maps api thing
             inputPlace.setText("Lat: " + String.valueOf(location.getLatitude()) +
                     " Long: " + String.valueOf(location.getLongitude()));
 
-            GetGoogleApiPlacesAsync(String.valueOf(location.getLatitude()),
-                    String.valueOf(location.getLongitude()),
-                    String.valueOf(location.getAccuracy()));
+            placesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String pickedPlace = parent.getItemAtPosition(position).toString();
+                    inputPlace.setText(pickedPlace);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+
+            //Quota get full - uncomment on showing!
+//            GetGoogleApiPlacesAsync(String.valueOf(location.getLatitude()),
+//                    String.valueOf(location.getLongitude()),
+//                    String.valueOf(location.getAccuracy()));
+
+            String[] places = new String[3];
+            places[0] = "Sofia";
+            places[1] = "Zk. Mladost 1";
+            places[2] = "bul. Aleksander Malinov";
+
+            ArrayAdapter newPlacesAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_item, places);
+            newPlacesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            placesSpinner.setAdapter(newPlacesAdapter);
+//... and comment till here
         }
 
         @Override
@@ -263,11 +287,11 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         notificationManager.notify(R.id.myDiary_notification, notification);
         AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC_WAKEUP, dateSetter.getChosenDate().getTime()-System.currentTimeMillis(), resultPendingIntent);
+        mgr.set(AlarmManager.RTC_WAKEUP, dateSetter.getChosenDate().getTime() - System.currentTimeMillis(), resultPendingIntent);
     }
 
-    private void GetGoogleApiPlacesAsync(String latitude, String longitude, String radiusInMeters){
-        if (radiusInMeters == null || radiusInMeters.isEmpty()){
+    private void GetGoogleApiPlacesAsync(String latitude, String longitude, String radiusInMeters) {
+        if (radiusInMeters == null || radiusInMeters.isEmpty()) {
             radiusInMeters = DefaultRadiusInMeters;
         }
 
@@ -302,7 +326,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 }
             } catch (Exception e) {
                 Log.v("GoogleApiPlacesResult", e.getStackTrace().toString());
-                Toast.makeText(getApplicationContext(),"No internet Connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "No internet Connection", Toast.LENGTH_LONG).show();
             } finally {
                 urlConnection.disconnect();
             }
@@ -326,10 +350,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
-    private ResultsContainer ParseGoogleApiPlacesResult(String googleApiPlacesJsonString){
+    private ResultsContainer ParseGoogleApiPlacesResult(String googleApiPlacesJsonString) {
         List places = new ArrayList(20);
         Gson jsonObj = new Gson();
-        ResultsContainer result = jsonObj.fromJson(googleApiPlacesJsonString,ResultsContainer.class);
+        ResultsContainer result = jsonObj.fromJson(googleApiPlacesJsonString, ResultsContainer.class);
 
         return result;
     }
@@ -337,7 +361,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     public class ResultsContainer {
         private ArrayList<Place> results;
 
-        public ResultsContainer(){
+        public ResultsContainer() {
             results = new ArrayList<Place>();
         }
 
@@ -357,6 +381,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         public String getIcon() {
             return icon;
         }
+
         public void setIcon(String icon) {
             this.icon = icon;
         }
@@ -364,6 +389,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         public String getName() {
             return name;
         }
+
         public void setName(String name) {
             this.name = name;
         }
