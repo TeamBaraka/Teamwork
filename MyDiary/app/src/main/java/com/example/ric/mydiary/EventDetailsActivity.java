@@ -97,8 +97,17 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                         startActivity(intent);
                         break;
                     case "class com.example.ric.mydiary.MainSearchFragment":
-                        intent = new Intent(EventDetailsActivity.this, MainSearchFragment.class);
+                        intent = new Intent(EventDetailsActivity.this, MainActivity.class);
+                        MainActivity.viewPager.setCurrentItem(1);
                         startActivity(intent);
+
+//                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                        MainSearchFragment fr =new MainSearchFragment();
+//                        ft.add(fr, null);
+//                        ft.commit();
+//                        Fragment mFragment = new MainSearchFragment();
+//                        getSupportFragmentManager().beginTransaction().replace(EventDetailsActivity.this, mFragment).commit();
+
 
                         break;
                 }

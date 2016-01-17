@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.ric.mydiary.Database.Category;
 import com.example.ric.mydiary.Database.Event;
@@ -77,7 +79,7 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
         switch (viewId) {
             case R.id.btn_search: {
                 loaderAnimation();
-                checked = ((RadioButton) rootView.findViewById(rg.getCheckedRadioButtonId())).getText().toString();;
+                checked = ((RadioButton) rootView.findViewById(rg.getCheckedRadioButtonId())).getText().toString();
                 getDataFromDb(checked);
                 adapter = new EventAdapter(context, this.list);
                 listView.setAdapter(adapter);
@@ -104,7 +106,9 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
             case R.id.radio_title:
                 searchedCategory.setVisibility(View.GONE);
                 searchedInput.setVisibility(View.VISIBLE);
+                searchedInput.setOnClickListener(null);
                 searchedInput.setText("");
+                searchedInput.setFocusableInTouchMode(true);
                 break;
 
             case R.id.radio_category:
@@ -116,6 +120,7 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
                 searchedCategory.setVisibility(View.GONE);
                 searchedInput.setVisibility(View.VISIBLE);
                 searchedInput.setText("");
+                searchedInput.setFocusable(false);
                 dateSetter = new DateSetter(context, searchedInput);
                 break;
 
@@ -123,6 +128,7 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
                 searchedCategory.setVisibility(View.GONE);
                 searchedInput.setVisibility(View.VISIBLE);
                 searchedInput.setText("");
+                searchedInput.setFocusable(false);
 
                 break;
         }

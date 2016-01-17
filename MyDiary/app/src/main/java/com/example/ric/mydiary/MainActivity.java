@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    private ViewPager viewPager;
+    public static ViewPager viewPager;
     private PagerAdapter pagerAdapter;
 
     @Override

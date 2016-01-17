@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="myDiary_notification" type="id">MyDiary_Notification</item>
+</resources>

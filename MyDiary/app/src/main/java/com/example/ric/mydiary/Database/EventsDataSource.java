@@ -32,6 +32,9 @@ public class EventsDataSource {
     public void close() {
         dbHelper.close();
     }
+    public void delete() {
+        dbHelper.onDelete(db);
+    }
 
     public long createEvent(String title, String description, String category, Date dateTime, String place, String image) {
         this.db = this.dbHelper.getWritableDatabase();

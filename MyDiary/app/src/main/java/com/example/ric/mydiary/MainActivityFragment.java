@@ -27,7 +27,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     EventsDataSource mydb;
     private View rootView;
     private Context context;
-    //ArrayAdapter<Event> arrayAdapter;
     private EventAdapter adapter;
 
     @Override
@@ -36,6 +35,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         this.context = getActivity();
         mydb = new EventsDataSource(context);
+        //mydb.delete();
 
         ArrayList<Event> list = mydb.getEventsForToday();
         adapter = new EventAdapter(context, list);

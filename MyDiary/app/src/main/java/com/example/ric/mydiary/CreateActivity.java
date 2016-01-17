@@ -1,10 +1,18 @@
 package com.example.ric.mydiary;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -12,6 +20,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -55,6 +64,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     int myRequestCode = 1234;
     private LocationManager locationManager;
     private android.location.LocationListener locationListener;
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
+    BroadcastReceiver mReceiver;
+    DateSetter dateSetter;
 
     EventsDataSource mydb;
 
@@ -69,7 +82,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         inputCategory = (Spinner) findViewById(R.id.edit_category);
         inputCategory.setAdapter(new ArrayAdapter<Category>(this, android.R.layout.simple_spinner_dropdown_item, Category.values()));
         inputDate = (EditText) findViewById(R.id.edit_date);
-        DateSetter dateSetter = new DateSetter(this, inputDate);
+        dateSetter = new DateSetter(this, inputDate);
         inputTime = (EditText) findViewById(R.id.edit_time);
         TimeSetter timeSetter = new TimeSetter(this, inputTime);
         imageView = (ImageView) this.findViewById(R.id.photo_taken);
@@ -99,7 +112,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 );
 
                 Toast.makeText(getApplicationContext(), "Event saved!", Toast.LENGTH_SHORT).show();
-
+                createNotification();
                 Intent intent = new Intent(CreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;
@@ -110,29 +123,29 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             }
             case R.id.btn_take_place: {
-//                Intent intent = new Intent(CreateActivity.this, MapsActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(CreateActivity.this, MapsActivity.class);
+                startActivity(intent);
 
-                locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-                locationListener = new LocationListener();
-                if (this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    this.requestPermissions(new String[]{
-                                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                    android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                            myRequestCode);
-                }
-
-                if (this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    return;
-                }
-
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-                locationManager.removeUpdates(locationListener);
+//                locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//                locationListener = new LocationListener();
+//                if (this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                        ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                    this.requestPermissions(new String[]{
+//                                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+//                                    android.Manifest.permission.ACCESS_COARSE_LOCATION},
+//                            myRequestCode);
+//                }
+//
+//                if (this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                        this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                    return;
+//                }
+//
+//                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+//
+//                locationManager.removeUpdates(locationListener);
                 break;
             }
         }
@@ -206,4 +219,35 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    public void createNotification() {
+
+        Notification.Builder builder =
+                new Notification.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("My")
+                        .setContentText("What's up, cause I am down :)");
+
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        builder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        Notification notification = builder.build();
+        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.PRIORITY_HIGH;
+
+        notificationManager.notify(R.id.myDiary_notification, notification);
+        AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC_WAKEUP, dateSetter.getChosenDate().getTime()-System.currentTimeMillis(), resultPendingIntent);
+    }
 }

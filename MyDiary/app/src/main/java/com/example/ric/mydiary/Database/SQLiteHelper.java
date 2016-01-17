@@ -40,4 +40,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + EVENTS_TABLE_NAME);
         onCreate(db);
     }
+
+    public void onDelete(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + EVENTS_TABLE_NAME);
+    }
 }
