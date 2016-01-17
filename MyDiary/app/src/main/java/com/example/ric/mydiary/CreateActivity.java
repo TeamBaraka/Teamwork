@@ -242,6 +242,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             newPlacesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             placesSpinner.setAdapter(newPlacesAdapter);
 //... and comment till here
+
+
         }
 
         @Override
