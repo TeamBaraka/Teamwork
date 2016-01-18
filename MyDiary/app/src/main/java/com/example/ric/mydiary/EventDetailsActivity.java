@@ -45,7 +45,10 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     private ImageView imageView;
     private TextView place;
     private FloatingActionButton closeButton;
+    private FloatingActionButton editButton;
+    private FloatingActionButton deleteButton;
     EventsDataSource mydb;
+    Long id;
     Event currentEvent;
     String sender;
 
@@ -56,11 +59,15 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
 
         closeButton = (FloatingActionButton) findViewById(R.id.btn_close_details);
         closeButton.setOnClickListener(this);
+        editButton = (FloatingActionButton) findViewById(R.id.btn_edit_details);
+        editButton.setOnClickListener(this);
+        deleteButton = (FloatingActionButton) findViewById(R.id.btn_delete_details);
+        deleteButton.setOnClickListener(this);
 
         mydb = new EventsDataSource(this);
 
         Bundle bundle = getIntent().getExtras();
-        Long id = bundle.getLong("id");
+        id = bundle.getLong("id");
         sender = bundle.get("SENDER_CLASS_NAME").toString();
 
         currentEvent = mydb.getEventsById(id);
@@ -77,10 +84,8 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         category.setText(currentEvent.getCategory());
         date.setText(DateTimeSetter.setDateToDisplayString(currentEvent.getDateTime()));
         place.setText(currentEvent.getPlace());
-        //new DownloadImageTask(imageView).execute(currentEvent.getImage());
         Bitmap bitmap = BitmapFactory.decodeFile(currentEvent.getImage());
         imageView.setImageBitmap(bitmap);
-
     }
 
     @Override
@@ -88,6 +93,20 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         int viewId = v.getId();
 
         switch (viewId) {
+            case R.id.btn_edit_details: {
+                Intent intent = new Intent(this, CreateActivity.class);
+                intent.putExtra("id", id);
+                intent.putExtra("SENDER_CLASS_NAME", this.getClass());
+                startActivity(intent);
+                break;
+            }
+            case R.id.btn_delete_details: {
+                mydb.deleteEvent(id);
+                Toast.makeText(getApplicationContext(), "Event deleted!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(EventDetailsActivity.this, MainActivity.class);
+                startActivity(intent);
+                break;
+            }
             case R.id.btn_close_details: {
                 Toast.makeText(getApplicationContext(), "Event details closed!", Toast.LENGTH_SHORT).show();
                 Intent intent;
@@ -100,15 +119,6 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                         intent = new Intent(EventDetailsActivity.this, MainActivity.class);
                         MainActivity.viewPager.setCurrentItem(1);
                         startActivity(intent);
-
-//                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                        MainSearchFragment fr =new MainSearchFragment();
-//                        ft.add(fr, null);
-//                        ft.commit();
-//                        Fragment mFragment = new MainSearchFragment();
-//                        getSupportFragmentManager().beginTransaction().replace(EventDetailsActivity.this, mFragment).commit();
-
-
                         break;
                 }
             }

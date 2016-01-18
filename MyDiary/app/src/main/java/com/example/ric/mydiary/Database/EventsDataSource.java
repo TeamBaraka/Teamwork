@@ -70,11 +70,11 @@ public class EventsDataSource {
         return true;
     }
 
-    public Integer deleteEvent(Integer id) {
+    public Long deleteEvent(Long id) {
         this.db = this.dbHelper.getWritableDatabase();
         db.delete(this.dbHelper.EVENTS_TABLE_NAME,
                 this.dbHelper.EVENTS_COLUMN_ID + " = ? ",
-                new String[]{Integer.toString(id)});
+                new String[]{Long.toString(id)});
         db.close();
         return id;
     }

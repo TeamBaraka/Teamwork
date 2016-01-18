@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.ric.mydiary.Database.Category;
+import com.example.ric.mydiary.Database.Event;
 import com.example.ric.mydiary.Database.EventsDataSource;
 import com.example.ric.mydiary.HelperClasses.AlarmReceiver;
 import com.example.ric.mydiary.HelperClasses.DateSetter;
@@ -80,6 +82,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     BroadcastReceiver mReceiver;
     DateSetter dateSetter;
     NotificationManager notificationManager;
+    Long id;
+    String sender;
+    Bundle bundle;
+    ArrayAdapter<Category> categoryArrayAdapter;
 
 
     EventsDataSource mydb;
@@ -90,10 +96,14 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         mydb = new EventsDataSource(this);
 
+        bundle = getIntent().getExtras();
+
+
         inputTitle = (EditText) findViewById(R.id.edit_title);
         inputDescription = (EditText) findViewById(R.id.edit_description);
         inputCategory = (Spinner) findViewById(R.id.edit_category);
-        inputCategory.setAdapter(new ArrayAdapter<Category>(this, android.R.layout.simple_spinner_dropdown_item, Category.values()));
+        categoryArrayAdapter = new ArrayAdapter<Category>(this, android.R.layout.simple_spinner_dropdown_item, Category.values());
+        inputCategory.setAdapter(categoryArrayAdapter);
         inputDate = (EditText) findViewById(R.id.edit_date);
         dateSetter = new DateSetter(this, inputDate);
         inputTime = (EditText) findViewById(R.id.edit_time);
@@ -112,6 +122,10 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         cancelButton.setOnClickListener(this);
         placeButton = (ImageButton) findViewById(R.id.btn_take_place);
         placeButton.setOnClickListener(this);
+
+        if (bundle != null) {
+            editEvent();
+        }
     }
 
     @Override
@@ -175,6 +189,18 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             }
         }
+    }
+
+    private void editEvent() {
+        id = bundle.getLong("id");
+        sender = bundle.get("SENDER_CLASS_NAME").toString();
+        Event currentEvent = mydb.getEventsById(id);
+        inputTitle.setText(currentEvent.getTitle());
+        inputDescription.setText(currentEvent.getDescription());
+
+        inputPlace.setText(currentEvent.getPlace());
+        Bitmap bitmap = BitmapFactory.decodeFile(currentEvent.getImage());
+        imageView.setImageBitmap(bitmap);
     }
 
     public void takePhoto(View view) {
@@ -367,7 +393,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.PRIORITY_HIGH;
 
         long futureInMillis = SystemClock.elapsedRealtime() + 5000;
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
 
 //        notificationManager.notify(R.id.myDiary_notification, notification);
@@ -383,8 +409,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        long futureInMillis = dateSetter.getChosenDate().getTime()-System.currentTimeMillis(); //SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        long futureInMillis = dateSetter.getChosenDate().getTime() - System.currentTimeMillis(); //SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
     }
 
