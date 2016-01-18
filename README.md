@@ -28,7 +28,6 @@ Teamwork in Mobile Applications for Android course @ TelerikAcademy
 ### Use animations
 
 - implemented loader on events search
-- search options are partly animated
 
 ### Device APIs
 
@@ -45,7 +44,7 @@ Teamwork in Mobile Applications for Android course @ TelerikAcademy
 
 ### Background tasks
 
-- Used SystemService for setting alarm for pending events, even when app is closed
+-
 
 ### Touch friendly UI
 
@@ -55,6 +54,7 @@ Teamwork in Mobile Applications for Android course @ TelerikAcademy
 
 - Used notifications to provide feedback to the user
   - Show a message when the user submits, edits, deletes data to the app
+  - Used SystemService for setting alarm for pending events, even when app is closed
 
 ### Gestures
 
@@ -73,7 +73,7 @@ Teamwork in Mobile Applications for Android course @ TelerikAcademy
 
 ##  Deliverables
 
-- YouTube:
-- http://best.telerikacademy.com
+- YouTube: https://www.youtube.com/watch?v=FZQDzQREL1Y&feature=youtu.be- 
+- Telerik: http://best.telerikacademy.com/projects/155/MyDiary
 - GitHub repository: https://github.com/TeamBaraka
 
