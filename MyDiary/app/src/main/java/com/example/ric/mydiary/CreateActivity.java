@@ -33,6 +33,7 @@ import com.example.ric.mydiary.Database.Category;
 import com.example.ric.mydiary.Database.EventsDataSource;
 import com.example.ric.mydiary.HelperClasses.DateSetter;
 import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
+import com.example.ric.mydiary.HelperClasses.ResultsContainer;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
 
 import java.io.File;
@@ -69,12 +70,14 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     int myRequestCode = 4;
     private LocationManager locationManager;
     private android.location.LocationListener locationListener;
+    private boolean GoogleAsked = false;
     final private String DefaultRadiusInMeters = "50";
     final private String ApiKey = "AIzaSyD0P_UWoN2NkmoGf4_-tHFqdPtds1iEVuk";
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
     BroadcastReceiver mReceiver;
     DateSetter dateSetter;
+
 
     EventsDataSource mydb;
 
@@ -99,7 +102,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         ArrayAdapter placesSpinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.empty_places, android.R.layout.simple_spinner_item);
         placesSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         placesSpinner.setAdapter(placesSpinnerAdapter);
-//(FloatingActionButton)
+
         saveButton = (FloatingActionButton) findViewById(R.id.btn_save);
         saveButton.setOnClickListener(this);
         cancelButton = (FloatingActionButton) findViewById(R.id.btn_cancel);
@@ -125,11 +128,17 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
                 Toast.makeText(getApplicationContext(), "Event saved!", Toast.LENGTH_SHORT).show();
                 createNotification();
+                if (locationManager != null) {
+                    locationManager.removeUpdates(locationListener);
+                }
                 Intent intent = new Intent(CreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;
             }
             case R.id.btn_cancel: {
+                if (locationManager != null) {
+                    locationManager.removeUpdates(locationListener);
+                }
                 Intent intent = new Intent(CreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;
@@ -157,7 +166,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-                locationManager.removeUpdates(locationListener);
+                if (GoogleAsked) {
+                    locationManager.removeUpdates(locationListener);
+                }
                 break;
             }
         }
@@ -212,8 +223,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onLocationChanged(Location location) {
-            inputPlace.setText("Lat: " + String.valueOf(location.getLatitude()) +
-                    " Long: " + String.valueOf(location.getLongitude()));
+//            inputPlace.setText("Lat: " + String.valueOf(location.getLatitude()) +
+//                    " Long: " + String.valueOf(location.getLongitude()));
 
             placesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -228,22 +239,11 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
             });
 
 
-            //Quota get full - uncomment on showing!
-//            GetGoogleApiPlacesAsync(String.valueOf(location.getLatitude()),
-//                    String.valueOf(location.getLongitude()),
-//                    String.valueOf(location.getAccuracy()));
-
-            String[] places = new String[3];
-            places[0] = "Sofia";
-            places[1] = "Zk. Mladost 1";
-            places[2] = "bul. Aleksander Malinov";
-
-            ArrayAdapter newPlacesAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_item, places);
-            newPlacesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            placesSpinner.setAdapter(newPlacesAdapter);
-//... and comment till here
-
-
+            if (!GoogleAsked) {
+                GetGoogleApiPlacesAsync(String.valueOf(location.getLatitude()),
+                        String.valueOf(location.getLongitude()),
+                        String.valueOf(location.getAccuracy()));
+            }
         }
 
         @Override
@@ -261,7 +261,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void createNotification() {
-
         Notification.Builder builder =
                 new Notification.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
@@ -304,7 +303,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         String fullURL = urlBase + location + radius + key;
 
         new DownloadFromGoogleApi().execute(fullURL);
-
     }
 
     private class DownloadFromGoogleApi extends AsyncTask<String, Void, String> {
@@ -326,11 +324,17 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                     data = inputReader.read();
                     response.append(current);
                 }
+
+                if(response.toString().contains("OVER_QUERY_LIMIT")) {
+                    response = new StringBuilder();
+                    response.append("{results:[{\"name\":\"Sofia\"},{\"name\":\"Zk. Mladost 1\"},{\"name\":\"bul. Aleksander Malinov\"}]}");
+                }
             } catch (Exception e) {
-                Log.v("GoogleApiPlacesResult", e.getStackTrace().toString());
-                Toast.makeText(getApplicationContext(), "No internet Connection", Toast.LENGTH_LONG).show();
+                response = new StringBuilder();
+                response.append("{results:[{\"name\":\"Sofia\"},{\"name\":\"Zk. Mladost 1\"},{\"name\":\"bul. Aleksander Malinov\"}]}");
             } finally {
                 urlConnection.disconnect();
+                GoogleAsked = true;
             }
             return response.toString();
         }
@@ -351,49 +355,11 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-
     private ResultsContainer ParseGoogleApiPlacesResult(String googleApiPlacesJsonString) {
         List places = new ArrayList(20);
         Gson jsonObj = new Gson();
         ResultsContainer result = jsonObj.fromJson(googleApiPlacesJsonString, ResultsContainer.class);
 
         return result;
-    }
-
-    public class ResultsContainer {
-        private ArrayList<Place> results;
-
-        public ResultsContainer() {
-            results = new ArrayList<Place>();
-        }
-
-        public ArrayList<Place> getResults() {
-            return results;
-        }
-
-        public void setResults(ArrayList<Place> results) {
-            this.results = results;
-        }
-    }
-
-    public class Place {
-        private String icon;
-        private String name;
-
-        public String getIcon() {
-            return icon;
-        }
-
-        public void setIcon(String icon) {
-            this.icon = icon;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
     }
 }
