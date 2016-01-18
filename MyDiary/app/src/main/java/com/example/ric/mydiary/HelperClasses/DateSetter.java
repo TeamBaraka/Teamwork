@@ -15,7 +15,7 @@ import java.util.TimeZone;
 public class DateSetter implements View.OnClickListener,DatePickerDialog.OnDateSetListener {
     private EditText editText;
     private Context context;
-    Calendar myCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+2:00"));
+    Calendar myCalendar = Calendar.getInstance();
 
     public DateSetter(Context context,EditText editText) {
         this.editText = editText;

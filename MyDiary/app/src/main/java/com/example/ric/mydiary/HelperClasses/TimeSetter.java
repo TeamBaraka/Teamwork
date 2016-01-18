@@ -15,7 +15,7 @@ import java.util.TimeZone;
 public class TimeSetter implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
     private EditText editText;
     private Context context;
-    Calendar myCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+2:00"));
+    Calendar myCalendar = Calendar.getInstance();
 
     public TimeSetter(Context context, EditText editText) {
         this.editText = editText;
@@ -32,7 +32,10 @@ public class TimeSetter implements View.OnClickListener, TimePickerDialog.OnTime
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        this.editText.setText(hourOfDay + ":" + minute);
+        String myFormat = "HH:mm";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+
+        this.editText.setText(sdf.format(myCalendar.getTime()));
     }
 
     public Date getChosenTime() {
