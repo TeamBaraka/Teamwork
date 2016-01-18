@@ -174,7 +174,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
 
         GregorianCalendar calDate = new GregorianCalendar();
         calDate.setTime(date);
-
+        
         calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
         calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
                 calDate.getTimeInMillis());
