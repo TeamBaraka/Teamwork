@@ -73,7 +73,7 @@ Teamwork in Mobile Applications for Android course @ TelerikAcademy
 
 ##  Deliverables
 
-- YouTube: https://www.youtube.com/watch?v=FZQDzQREL1Y&feature=youtu.be- 
+- YouTube: https://www.youtube.com/watch?v=FZQDzQREL1Y&feature=youtu.be 
 - Telerik: http://best.telerikacademy.com/projects/155/MyDiary
 - GitHub repository: https://github.com/TeamBaraka
 
