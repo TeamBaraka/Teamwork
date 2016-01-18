@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import com.example.ric.mydiary.Database.Category;
 import com.example.ric.mydiary.Database.EventsDataSource;
+import com.example.ric.mydiary.HelperClasses.AlarmReceiver;
 import com.example.ric.mydiary.HelperClasses.DateSetter;
 import com.example.ric.mydiary.HelperClasses.DateTimeSetter;
 import com.example.ric.mydiary.HelperClasses.TimeSetter;
@@ -75,6 +77,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
     PendingIntent pendingIntent;
     BroadcastReceiver mReceiver;
     DateSetter dateSetter;
+    NotificationManager notificationManager;
 
     EventsDataSource mydb;
 
@@ -124,7 +127,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 );
 
                 Toast.makeText(getApplicationContext(), "Event saved!", Toast.LENGTH_SHORT).show();
-                createNotification();
+                scheduleNotification(getNotification());
                 Intent intent = new Intent(CreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;
@@ -260,38 +263,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public void createNotification() {
-
-        Notification.Builder builder =
-                new Notification.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("My")
-                        .setContentText("What's up, cause I am down :)");
-
-        Intent resultIntent = new Intent(this, MainActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        builder.setContentIntent(resultPendingIntent);
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-
-        Notification notification = builder.build();
-        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.PRIORITY_HIGH;
-
-        notificationManager.notify(R.id.myDiary_notification, notification);
-        AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC_WAKEUP, dateSetter.getChosenDate().getTime() - System.currentTimeMillis(), resultPendingIntent);
-    }
-
     private void GetGoogleApiPlacesAsync(String latitude, String longitude, String radiusInMeters) {
         if (radiusInMeters == null || radiusInMeters.isEmpty()) {
             radiusInMeters = DefaultRadiusInMeters;
@@ -395,5 +366,85 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         public void setName(String name) {
             this.name = name;
         }
+    }
+
+    public void createNotification() {
+
+        Notification.Builder builder =
+                new Notification.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(inputTitle.getText().toString())
+                        .setContentText(inputCategory.getSelectedItem().toString())
+                        .setTicker("Alert New Event");
+
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, builder.build());
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+
+        stackBuilder.addNextIntent(notificationIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        builder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        Notification notification = builder.build();
+        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.PRIORITY_HIGH;
+
+        long futureInMillis = SystemClock.elapsedRealtime() + 5000;
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+
+//        notificationManager.notify(R.id.myDiary_notification, notification);
+//        AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+//        mgr.set(AlarmManager.RTC_WAKEUP, dateSetter.getChosenDate().getTime() - System.currentTimeMillis(), resultPendingIntent);
+    }
+
+    private void scheduleNotification(Notification notification) {
+
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = dateSetter.getChosenDate().getTime()-System.currentTimeMillis(); //SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    private Notification getNotification() {
+        Notification.Builder builder =
+                new Notification.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(inputTitle.getText().toString())
+                        .setContentText(inputCategory.getSelectedItem().toString())
+                        .setTicker("Alert New Event");
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        builder.setContentIntent(resultPendingIntent);
+//        notificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        builder.setContentIntent(resultPendingIntent);
+
+        stackBuilder.addNextIntent(resultIntent);
+        return builder.build();
     }
 }

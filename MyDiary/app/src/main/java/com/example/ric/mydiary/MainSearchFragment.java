@@ -127,6 +127,7 @@ public class MainSearchFragment extends Fragment implements View.OnClickListener
             case R.id.radio_all:
                 searchedCategory.setVisibility(View.GONE);
                 searchedInput.setVisibility(View.VISIBLE);
+                searchedInput.setOnClickListener(null);
                 searchedInput.setText("");
                 searchedInput.setFocusable(false);
 

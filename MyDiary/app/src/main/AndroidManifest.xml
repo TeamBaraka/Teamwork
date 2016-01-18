@@ -17,6 +17,8 @@
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.ACCESS_ASSISTED_GPS" />
     <uses-permission android:name="android.permission.SET_TIME_ZONE" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -43,6 +45,8 @@
         <activity android:name=".EventDetailsActivity" />
         <activity android:name=".ExportActivity" />
         <activity android:name=".MapsActivity" />
+
+        <receiver android:process=":remote" android:name=".HelperClasses.AlarmReceiver"></receiver>
 
         <meta-data
             android:name="com.google.android.gms.version"
