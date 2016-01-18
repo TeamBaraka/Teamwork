@@ -52,7 +52,7 @@ public class EventsDataSource {
         return newEventsId;
     }
 
-    public boolean updateEvent(Integer id, String title, String description, String category, Date dateTime, String place, String image) {
+    public boolean updateEvent(Long id, String title, String description, String category, Date dateTime, String place, String image) {
         this.db = this.dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(this.dbHelper.EVENTS_COLUMN_TITLE, title);
@@ -65,7 +65,7 @@ public class EventsDataSource {
         db.update(this.dbHelper.EVENTS_TABLE_NAME,
                 values,
                 this.dbHelper.EVENTS_COLUMN_ID + " = ? ",
-                new String[]{Integer.toString(id)});
+                new String[]{Long.toString(id)});
         db.close();
         return true;
     }

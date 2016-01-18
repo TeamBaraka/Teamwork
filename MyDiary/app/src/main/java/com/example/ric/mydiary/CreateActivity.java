@@ -134,6 +134,19 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (viewId) {
             case R.id.btn_save: {
+                if (id!=null){
+                    mydb.updateEvent(id,
+                            inputTitle.getText().toString(),
+                            inputDescription.getText().toString(),
+                            inputCategory.getSelectedItem().toString(),
+                            DateTimeSetter.getDateFromDisplayString(inputDate.getText().toString(), inputTime.getText().toString()),
+                            inputPlace.getText().toString(),
+                            inputImage
+                    );
+                    Toast.makeText(getApplicationContext(), "Event edited!", Toast.LENGTH_SHORT).show();
+
+                }
+                else {
                 mydb.createEvent(
                         inputTitle.getText().toString(),
                         inputDescription.getText().toString(),
@@ -145,6 +158,7 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
 
                 Toast.makeText(getApplicationContext(), "Event saved!", Toast.LENGTH_SHORT).show();
                 scheduleNotification(getNotification());
+                }
                 if (locationManager != null) {
                     locationManager.removeUpdates(locationListener);
                 }
@@ -160,9 +174,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
                 break;
             }
+
             case R.id.btn_take_place: {
-//                Intent intent = new Intent(CreateActivity.this, MapsActivity.class);
-//                startActivity(intent);
 
                 locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
                 locationListener = new LocationListener();
@@ -197,7 +210,9 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         Event currentEvent = mydb.getEventsById(id);
         inputTitle.setText(currentEvent.getTitle());
         inputDescription.setText(currentEvent.getDescription());
-
+        inputCategory.setSelection(categoryArrayAdapter.getPosition(Category.valueOf(currentEvent.getCategory())));
+        inputDate.setText(DateTimeSetter.setDateToDisplayString(currentEvent.getDateTime()));
+        inputTime.setText(DateTimeSetter.setTimeToDisplayString(currentEvent.getDateTime()));
         inputPlace.setText(currentEvent.getPlace());
         Bitmap bitmap = BitmapFactory.decodeFile(currentEvent.getImage());
         imageView.setImageBitmap(bitmap);
@@ -361,48 +376,8 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         return result;
     }
 
-    public void createNotification() {
-
-        Notification.Builder builder =
-                new Notification.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(inputTitle.getText().toString())
-                        .setContentText(inputCategory.getSelectedItem().toString())
-                        .setTicker("Alert New Event");
-
-        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
-        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, 1);
-        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, builder.build());
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-
-        stackBuilder.addNextIntent(notificationIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        builder.setContentIntent(resultPendingIntent);
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-
-        Notification notification = builder.build();
-        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.PRIORITY_HIGH;
-
-        long futureInMillis = SystemClock.elapsedRealtime() + 5000;
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-
-//        notificationManager.notify(R.id.myDiary_notification, notification);
-//        AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-//        mgr.set(AlarmManager.RTC_WAKEUP, dateSetter.getChosenDate().getTime() - System.currentTimeMillis(), resultPendingIntent);
-    }
-
     private void scheduleNotification(Notification notification) {
-
+        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.PRIORITY_HIGH;
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
 
         notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, 1);
@@ -412,6 +387,19 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
         long futureInMillis = dateSetter.getChosenDate().getTime() - System.currentTimeMillis(); //SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    private void scheduleRepetitiveNotification(Notification notification,Long delay) {
+        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.PRIORITY_HIGH;
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //long futureInMillis = dateSetter.getChosenDate().getTime() - System.currentTimeMillis(); //SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, System.currentTimeMillis(),delay, pendingIntent);
     }
 
     private Notification getNotification() {
@@ -433,11 +421,6 @@ public class CreateActivity extends AppCompatActivity implements View.OnClickLis
                 );
 
         builder.setContentIntent(resultPendingIntent);
-//        notificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        builder.setContentIntent(resultPendingIntent);
-
-        stackBuilder.addNextIntent(resultIntent);
         return builder.build();
     }
 }

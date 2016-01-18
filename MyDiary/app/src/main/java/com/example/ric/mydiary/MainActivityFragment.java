@@ -77,11 +77,13 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                 startActivity(intent);
                 break;
             }
+
             case R.id.btn_add_reminder: {
                 Intent intent = new Intent(context, RemindActivity.class);
                 startActivity(intent);
                 break;
             }
+
             case R.id.btn_export: {
                 Intent intent = new Intent(context, ExportActivity.class);
                 startActivity(intent);

@@ -10,6 +10,10 @@ public class DateTimeSetter {
             "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     static SimpleDateFormat sdfDisplayDatetime = new SimpleDateFormat(
             "dd.MM.yyyy HH:mm", Locale.getDefault());
+    static SimpleDateFormat sdfDisplayTime = new SimpleDateFormat(
+            "HH:mm", Locale.getDefault());
+    static SimpleDateFormat sdfDisplayDate = new SimpleDateFormat(
+            "dd.MM.yyyy", Locale.getDefault());
     static String defaultTime = "00:00";
 
     public static String setDateToSqlite(Date date) {
@@ -28,9 +32,19 @@ public class DateTimeSetter {
         return returnDate;
     }
 
-    public static String setDateToDisplayString(Date date) {
+    public static String setDateTimeToDisplayString(Date date) {
 
         return sdfDisplayDatetime.format(date);
+    }
+
+    public static String setDateToDisplayString(Date date) {
+
+        return sdfDisplayDate.format(date);
+    }
+
+    public static String setTimeToDisplayString(Date date) {
+
+        return sdfDisplayTime.format(date);
     }
 
     public static Date getDateFromDisplayString(String date, String time) {

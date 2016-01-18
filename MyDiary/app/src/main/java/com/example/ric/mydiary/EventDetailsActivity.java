@@ -82,7 +82,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         title.setText(currentEvent.getTitle());
         description.setText(currentEvent.getDescription());
         category.setText(currentEvent.getCategory());
-        date.setText(DateTimeSetter.setDateToDisplayString(currentEvent.getDateTime()));
+        date.setText(DateTimeSetter.setDateTimeToDisplayString(currentEvent.getDateTime()));
         place.setText(currentEvent.getPlace());
         Bitmap bitmap = BitmapFactory.decodeFile(currentEvent.getImage());
         imageView.setImageBitmap(bitmap);
@@ -97,6 +97,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                 Intent intent = new Intent(this, CreateActivity.class);
                 intent.putExtra("id", id);
                 intent.putExtra("SENDER_CLASS_NAME", this.getClass());
+                Toast.makeText(getApplicationContext(), "You are in edit mode and can modify the event!", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
                 break;
             }
