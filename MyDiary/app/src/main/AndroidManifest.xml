@@ -43,7 +43,6 @@
         <activity android:name=".CreateActivity" />
         <activity android:name=".RemindActivity" />
         <activity android:name=".EventDetailsActivity" />
-        <activity android:name=".ExportActivity" />
         <activity android:name=".MapsActivity" />
 
         <receiver android:process=":remote" android:name=".HelperClasses.AlarmReceiver"></receiver>

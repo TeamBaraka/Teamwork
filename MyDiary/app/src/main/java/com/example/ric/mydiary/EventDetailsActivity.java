@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,8 @@ import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class EventDetailsActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView title;
@@ -47,6 +50,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     private FloatingActionButton closeButton;
     private FloatingActionButton editButton;
     private FloatingActionButton deleteButton;
+    private FloatingActionButton exportButton;
     EventsDataSource mydb;
     Long id;
     Event currentEvent;
@@ -63,6 +67,8 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         editButton.setOnClickListener(this);
         deleteButton = (FloatingActionButton) findViewById(R.id.btn_delete_details);
         deleteButton.setOnClickListener(this);
+        exportButton = (FloatingActionButton) findViewById(R.id.btn_export_details);
+        exportButton.setOnClickListener(this);
 
         mydb = new EventsDataSource(this);
 
@@ -122,6 +128,10 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                         break;
                 }
             }
+            case R.id.btn_export_details: {
+                InsertInCalendar(currentEvent.getTitle(), currentEvent.getDescription(), currentEvent.getPlace(), currentEvent.getDateTime());
+                break;
+            }
         }
     }
 
@@ -150,5 +160,26 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
+    }
+
+    public void InsertInCalendar(String title,String description, String place, Date date){
+        Intent calIntent = new Intent(Intent.ACTION_INSERT);
+        calIntent.setType("vnd.android.cursor.item/event");
+        calIntent.setData(CalendarContract.Events.CONTENT_URI);
+        calIntent.putExtra(CalendarContract.Events.TITLE, title);
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, place);
+        calIntent.putExtra(CalendarContract.Events.DESCRIPTION, description);
+
+        GregorianCalendar calDate = new GregorianCalendar();
+        calDate.setTime(date);
+
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                calDate.getTimeInMillis());
+
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                calDate.getTimeInMillis());
+
+        startActivity(calIntent);
     }
 }
