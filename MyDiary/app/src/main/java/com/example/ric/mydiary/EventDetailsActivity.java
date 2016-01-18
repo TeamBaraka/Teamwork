@@ -128,6 +128,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                         startActivity(intent);
                         break;
                 }
+                break;
             }
             case R.id.btn_export_details: {
                 InsertInCalendar(currentEvent.getTitle(), currentEvent.getDescription(), currentEvent.getPlace(), currentEvent.getDateTime());
